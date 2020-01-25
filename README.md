@@ -20,4 +20,4 @@ The output .efi file MUST be run under the EFI shell after changing to the devic
 FS0:
 CraftOS
 ```
-This is done automatically in the image file in the releases/
+This is done automatically in the image file in the releases.

@@ -10,12 +10,12 @@
 ##
 
 [Defines]
-  INF_VERSION                    = 1.25
+  INF_VERSION                    = 0x00010006
   BASE_NAME                      = CraftOS
-  FILE_GUID                      = 426BC876-2FB8-4F3C-8DFA-FCD178CC225F
+  FILE_GUID                      = 426bc876-2fb8-4f3c-8dfa-fcd178cc225f
   MODULE_TYPE                    = UEFI_APPLICATION
   VERSION_STRING                 = 1.8
-  ENTRY_POINT                    = UefiMain
+  ENTRY_POINT                    = ShellCEntryLibA
 #
 # The following information is for reference only and not required by the build tools.
 #
@@ -23,72 +23,60 @@
 #
 
 [Sources]
-  bios.c
-  fs_handle.c
-  fs.c
-  keys.c
-  lib.c
-  main.c
-  os.c
-  queue.c
-  term.c
+  ./bios.c
+  ./efi.c
+  ./fs_handle.c
+  ./fs.c
+  ./keys.c
+  ./lib.c
+  ./main.c
+  ./os.c
+  ./queue.c
+  ./term.c
 
-  lua/lapi.c
-  lua/lauxlib.c
-  lua/lbaselib.c
-  lua/lcode.c
-  lua/ldblib.c
-  lua/ldebug.c
-  lua/ldo.c
-  lua/ldump.c
-  lua/lfunc.c
-  lua/lgc.c
-  lua/linit.c
-  lua/liolib.c
-  lua/llex.c
-  lua/lmathlib.c
-  lua/lmem.c
-  lua/loadlib.c
-  lua/lobject.c
-  lua/lopcodes.c
-  lua/loslib.c
-  lua/lparser.c
-  lua/lstate.c
-  lua/lstring.c
-  lua/lstrlib.c
-  lua/ltable.c
-  lua/ltablib.c
-  lua/ltm.c
-  lua/lundump.c
-  lua/lvm.c
-  lua/lzio.c
+  ./lua/lapi.c
+  ./lua/lauxlib.c
+  ./lua/lbaselib.c
+  ./lua/lcode.c
+  ./lua/ldblib.c
+  ./lua/ldebug.c
+  ./lua/ldo.c
+  ./lua/ldump.c
+  ./lua/lfunc.c
+  ./lua/lgc.c
+  ./lua/linit.c
+  ./lua/liolib.c
+  ./lua/llex.c
+  ./lua/lmathlib.c
+  ./lua/lmem.c
+  ./lua/loadlib.c
+  ./lua/lobject.c
+  ./lua/lopcodes.c
+  ./lua/loslib.c
+  ./lua/lparser.c
+  ./lua/lstate.c
+  ./lua/lstring.c
+  ./lua/lstrlib.c
+  ./lua/ltable.c
+  ./lua/ltablib.c
+  ./lua/ltm.c
+  ./lua/lundump.c
+  ./lua/lvm.c
+  ./lua/lzio.c
 
 [Packages]
-  MdePkg/MdePkg.dec
   StdLib/StdLib.dec
+  MdePkg/MdePkg.dec
+  ShellPkg/ShellPkg.dec
   
 [LibraryClasses]
-  UefiApplicationEntryPoint
-  UefiLib
-  BaseLib
-  BaseMemoryLib
-  MemoryAllocationLib
-  LibStdLib
+  LibC
   LibStdio
+  LibStdLib
+  LibSignal
   LibString
-  DevConsole
-  DevShell
   LibMath
-  
-[Guids]
-
-[Ppis]
-
-[Protocols]
-
-[FeaturePcd]
-
-[Pcd]
-
-[BuildOptions]
-  GCC:*_*_*_CC_FLAGS    = -nostdinc -I StdLib/Include
+  LibTime
+  DevShell
+  UefiLib
+  ShellCEntryLib
