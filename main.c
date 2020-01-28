@@ -30,12 +30,12 @@ start:
      * All Lua contexts are held in this structure. We work with it almost
      * all the time.
      */
-    Print(L"A");
+    
     L = luaL_newstate();
-    Print(L"B");
+    
     coro = lua_newthread(L);
     paramQueue = lua_newthread(L);
-    Print(L"C");
+    
     luaL_openlibs(coro); /* Load Lua libraries */
     load_library(coro, bit_lib);
     load_library(coro, fs_lib);
@@ -46,12 +46,12 @@ start:
     load_library(coro, term_lib);
     termInit(GlobalSystemTable);
     initKeys();
-    Print(L"D");
+    
     lua_pushstring(L, "bios.use_multishell=false");
     lua_setglobal(L, "_CC_DEFAULT_SETTINGS");
     lua_pushstring(L, "CraftOS-EFI 1.8");
     lua_setglobal(L, "_HOST");
-    Print(L"E");
+    
     /* Load the file containing the script we are going to run */
     status = luaL_loadstring(coro, bios_str);
     if (status) {
@@ -68,7 +68,7 @@ start:
         for (int i = 0; i < 9999999; i++);
         return 2;
     }
-    Print(L"F");
+    
     /* Ask Lua to run our little script */
     status = LUA_YIELD;
     int narg = 0;
@@ -89,12 +89,12 @@ start:
             lua_close(L);
             return 1;
         }
-        Print(L"G");
+        
     }
     termClose();
     closeKeys();
     lua_close(L);   /* Cya, Lua */
-    Print(L"H");
+    
     if (running == 2) {
         goto start;
     }

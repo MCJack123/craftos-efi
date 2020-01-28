@@ -56,9 +56,11 @@ int term_write(lua_State *L) {
 int term_scroll(lua_State *L) {
     int scroll = lua_tointeger(L, 1);
     // first we have to scroll the screen buffer
-    for (int i = scroll; i < height; i++) memcpy(&screenBuffer[(i-scroll)*width], &screenBuffer[i*width], width);
+    for (int i = scroll; i < height; i++) {
+        memcpy(&screenBuffer[(i-scroll)*width], &screenBuffer[i*width], width);
+        memcpy(&colorBuffer[(i-scroll)*width], &colorBuffer[i*width], width);
+    }
     memset(&screenBuffer[(height-scroll)*width], ' ', width*scroll);
-    for (int i = scroll; i < height; i++) memcpy(&colorBuffer[(i-scroll)*width], &colorBuffer[i*width], width);
     memset(&colorBuffer[(height-scroll)*width], SystemTable->ConOut->Mode->Attribute, width*scroll);
     // then we have to update the actual console
     int oldx = SystemTable->ConOut->Mode->CursorColumn, oldy = SystemTable->ConOut->Mode->CursorRow;
@@ -67,7 +69,7 @@ int term_scroll(lua_State *L) {
     CHAR16 ch[2];
     ch[1] = 0;
     SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
-    for (int y = 0; y < height; y++) {
+    for (int y = 0; y < height - 1; y++) {
         for (int x = 0; x < width - (y == height - 1); x++) {
             ch[0] = screenBuffer[y*width+x];
             SystemTable->ConOut->SetCursorPosition(SystemTable->ConOut, x, y);
