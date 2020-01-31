@@ -1,4 +1,4 @@
-#include "lua/lua.h"
+#include <Lua/lua.h>
 extern int handle_close(lua_State *L);
 extern int handle_readAll(lua_State *L);
 extern int handle_readLine(lua_State *L);

@@ -76,6 +76,7 @@
   ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
 
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
+  LuaLib51|craftos-efi/LuaLib51.inf
 
 ###################################################################################################
 #
@@ -100,6 +101,7 @@
 
 #### Sample Applications.
   craftos-efi/CraftOS.inf
+  craftos-efi/Lua.inf
 
 
 ##############################################################################

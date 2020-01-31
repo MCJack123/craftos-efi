@@ -1,9 +1,11 @@
 #include "os.h"
 #include "keys.h"
-#include "lua/lauxlib.h"
+#include <Lua/lauxlib.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
+#define bool _Bool
+#define true 1
+#define false 0
 #include <time.h>
 #include "queue.h"
 #include <Uefi.h>

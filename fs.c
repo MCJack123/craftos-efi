@@ -1,15 +1,17 @@
 #include "fs.h"
 #include "fs_handle.h"
-#include <lauxlib.h>
+#include "lua/lauxlib.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef NULL
+#define NULL (void*)0
+#endif
 #include <unistd.h>
-#include <sys/stat.h>
-#include <libgen.h>
+//#include <sys/stat.h>
+//#include <libgen.h>
 #include <errno.h>
-#include <dirent.h>
-#include <wchar.h>
+//#include <dirent.h>
 #define true 1
 #define false 0
 
@@ -43,10 +45,251 @@ char * unconst(const char * str) {
     return retval;
 }
 
+const char * fs_list_rom[] = {
+    "apis",
+    "autorun",
+    "help",
+    "modules",
+    "programs",
+    "startup.lua",
+    NULL
+};
+
+const char * fs_list_rom_apis[] = {
+    "colors.lua",
+    "colours.lua",
+    "command",
+    "disk.lua",
+    "gps.lua",
+    "help.lua",
+    "io.lua",
+    "keys.lua",
+    "paintutils.lua",
+    "parallel.lua",
+    "peripheral.lua",
+    "rednet.lua",
+    "settings.lua",
+    "term.lua",
+    "textutils.lua",
+    "turtle",
+    "vector.lua",
+    "window.lua",
+    NULL
+};
+
+const char * fs_list_rom_apis_command[] = {"commands.lua", NULL};
+const char * fs_list_rom_apis_turtle[] = {"turtle.lua", NULL};
+const char * fs_list_ignoreme[] = {".ignoreme", NULL};
+
+const char * fs_list_rom_help[] = {
+    "adventure.txt",
+    "alias.txt",
+    "apis.txt",
+    "bg.txt",
+    "bit.txt",
+    "bundled.txt",
+    "cd.txt",
+    "changelog.txt",
+    "chat.txt",
+    "clear.txt",
+    "colors.txt",
+    "colours.txt",
+    "commands.txt",
+    "commandsapi.txt",
+    "copy.txt",
+    "coroutine.txt",
+    "craft.txt",
+    "credits.txt",
+    "dance.txt",
+    "delete.txt",
+    "disk.txt",
+    "dj.txt",
+    "drive.txt",
+    "drives.txt",
+    "earth.txt",
+    "edit.txt",
+    "eject.txt",
+    "equip.txt",
+    "events.txt",
+    "excavate.txt",
+    "exec.txt",
+    "exit.txt",
+    "falling.txt",
+    "fg.txt",
+    "fs.txt",
+    "go.txt",
+    "gps.txt",
+    "gpsapi.txt",
+    "hello.txt",
+    "help.txt",
+    "helpapi.txt",
+    "http.txt",
+    "id.txt",
+    "intro.txt",
+    "io.txt",
+    "keys.txt",
+    "label.txt",
+    "list.txt",
+    "lua.txt",
+    "math.txt",
+    "mkdir.txt",
+    "modems.txt",
+    "monitor.txt",
+    "monitors.txt",
+    "move.txt",
+    "multishell.txt",
+    "os.txt",
+    "paint.txt",
+    "paintutils.txt",
+    "parallel.txt",
+    "pastebin.txt",
+    "peripheral.txt",
+    "peripherals.txt",
+    "pocket.txt",
+    "printers.txt",
+    "programming.txt",
+    "programs.txt",
+    "reboot.txt",
+    "redirection.txt",
+    "rednet.txt",
+    "redstone.txt",
+    "redstoneapi.txt",
+    "refuel.txt",
+    "rename.txt",
+    "repeat.txt",
+    "rs.txt",
+    "set.txt",
+    "settings.txt",
+    "shell.txt",
+    "shellapi.txt",
+    "shutdown.txt",
+    "speakers.txt",
+    "string.txt",
+    "table.txt",
+    "term.txt",
+    "textutils.txt",
+    "time.txt",
+    "tunnel.txt",
+    "turn.txt",
+    "turtle.txt",
+    "type.txt",
+    "unequip.txt",
+    "vector.txt",
+    "wget.txt",
+    "whatsnew.txt",
+    "window.txt",
+    "workbench.txt",
+    "worm.txt",
+    NULL
+};
+
+const char * fs_list_rom_modules[] = {"command", "main", "turtle", NULL};
+
+const char * fs_list_rom_programs[] = {
+    "advanced",
+    "alias.lua",
+    "apis.lua",
+    "cd.lua",
+    "clear.lua",
+    "command",
+    "copy.lua",
+    "delete.lua",
+    "drive.lua",
+    "edit.lua",
+    "eject.lua",
+    "exit.lua",
+    "fun",
+    "gps.lua",
+    "help.lua",
+    "http",
+    "id.lua",
+    "label.lua",
+    "list.lua",
+    "lua.lua",
+    "mkdir.lua",
+    "monitor.lua",
+    "move.lua",
+    "peripherals.lua",
+    "pocket",
+    "programs.lua",
+    "reboot.lua",
+    "rednet",
+    "redstone.lua",
+    "rename.lua",
+    "set.lua",
+    "shell.lua",
+    "shutdown.lua",
+    "time.lua",
+    "turtle",
+    "type.lua",
+    NULL
+};
+
+const char * fs_list_rom_programs_advanced[] = {"bg.lua", "fg.lua", "multishell.lua", NULL};
+const char * fs_list_rom_programs_command[] = {"commands.lua", "exec.lua", NULL};
+
+const char * fs_list_rom_programs_fun[] = {
+    "advanced",
+    "adventure.lua",
+    "dj.lua",
+    "hello.lua",
+    "worm.lua",
+    NULL
+};
+
+const char * fs_list_rom_programs_fun_advanced[] = {"levels", "paint.lua", "redirection.lua", NULL};
+
+const char * fs_list_rom_programs_fun_advanced_levels[] = {
+    "0.dat",
+    "1.dat",
+    "10.dat",
+    "11.dat",
+    "12.dat",
+    "2.dat",
+    "3.dat",
+    "4.dat",
+    "5.dat",
+    "6.dat",
+    "7.dat",
+    "8.dat",
+    "9.dat",
+    NULL
+};
+
+const char * fs_list_rom_programs_http[] = {"pastebin.lua", "wget.lua", NULL};
+const char * fs_list_rom_programs_pocket[] = {"equip.lua", "falling.lua", "unequip.lua", NULL};
+const char * fs_list_rom_programs_rednet[] = {"chat.lua", "repeat.lua", NULL};
+
+const char * fs_list_rom_programs_turtle[] = {
+    "craft.lua",
+    "dance.lua",
+    "equip.lua",
+    "excavate.lua",
+    "go.lua",
+    "refuel.lua",
+    "tunnel.lua",
+    "turn.lua",
+    "unequip.lua",
+    NULL
+};
+
+const char * fs_list_[] = {"rom", NULL};
+
+char* dirname(char* path) {
+	if (path[0] == '/') strcpy(path, &path[1]);
+    char tch;
+    if (strrchr(path, '/') != NULL) tch = '/';
+    else if (strrchr(path, '\\') != NULL) tch = '\\';
+    else return path;
+    path[strrchr(path, tch) - path] = '\0';
+	return path;
+}
+
 int fs_list(lua_State *L) {
-    struct dirent *dir;
+    //struct dirent *dir;
     char * path = fixpath(lua_tostring(L, 1));
-    DIR * d = opendir(path);
+    if (strlen(path) > 1 && path[strlen(path)-1] == '/') path[strlen(path)-1] = 0;
+    /*DIR * d = opendir(path);
     if (d) {
         lua_newtable(L);
         for (int i = 0; (dir = readdir(d)) != NULL; i++) {
@@ -59,29 +302,63 @@ int fs_list(lua_State *L) {
             lua_settable(L, -3);
         }
         closedir(d);
-    } else err(L, path, "Not a directory");
+    } else err(L, path, "Not a directory");*/
+    const char ** filelist = NULL;
+    if (strcmp(path, "/") == 0) filelist = fs_list_;
+    else if (strcmp(path, "/rom") == 0) filelist = fs_list_rom;
+    else if (strcmp(path, "/rom/apis") == 0) filelist = fs_list_rom_apis;
+    else if (strcmp(path, "/rom/apis/command") == 0) filelist = fs_list_rom_apis_command;
+    else if (strcmp(path, "/rom/apis/turtle") == 0) filelist = fs_list_rom_apis_turtle;
+    else if (strcmp(path, "/rom/autorun") == 0) filelist = fs_list_ignoreme;
+    else if (strcmp(path, "/rom/help") == 0) filelist = fs_list_rom_help;
+    else if (strcmp(path, "/rom/modules") == 0) filelist = fs_list_rom_modules;
+    else if (strcmp(path, "/rom/modules/command") == 0) filelist = fs_list_ignoreme;
+    else if (strcmp(path, "/rom/modules/main") == 0) filelist = fs_list_ignoreme;
+    else if (strcmp(path, "/rom/modules/turtle") == 0) filelist = fs_list_ignoreme;
+    else if (strcmp(path, "/rom/programs") == 0) filelist = fs_list_rom_programs;
+    else if (strcmp(path, "/rom/programs/advanced") == 0) filelist = fs_list_rom_programs_advanced;
+    else if (strcmp(path, "/rom/programs/command") == 0) filelist = fs_list_rom_programs_command;
+    else if (strcmp(path, "/rom/programs/fun") == 0) filelist = fs_list_rom_programs_fun;
+    else if (strcmp(path, "/rom/programs/fun/advanced") == 0) filelist = fs_list_rom_programs_fun_advanced;
+    else if (strcmp(path, "/rom/programs/fun/advanced/levels") == 0) filelist = fs_list_rom_programs_fun_advanced_levels;
+    else if (strcmp(path, "/rom/programs/http") == 0) filelist = fs_list_rom_programs_http;
+    else if (strcmp(path, "/rom/programs/pocket") == 0) filelist = fs_list_rom_programs_pocket;
+    else if (strcmp(path, "/rom/programs/rednet") == 0) filelist = fs_list_rom_programs_rednet;
+    else if (strcmp(path, "/rom/programs/turtle") == 0) filelist = fs_list_rom_programs_turtle;
+    else err(L, path, "Not a directory");
+    lua_newtable(L);
+    for (int i = 0; filelist[i] != NULL; i++) {
+        lua_pushinteger(L, i+1);
+        lua_pushstring(L, filelist[i]);
+        lua_settable(L, -3);
+    }
     free(path);
     return 1;
 }
 
 int fs_exists(lua_State *L) {
     char * path = fixpath(lua_tostring(L, 1));
-    struct stat st;
-    lua_pushboolean(L, stat(path, &st) == 0);
+    //struct stat st;
+    //lua_pushboolean(L, stat(path, &st) == 0);
+    FILE *fp = fopen(path, "r");
+    lua_pushboolean(L, fp != NULL);
+    if (fp != NULL) fclose(fp);
     free(path);
     return 1;
 }
 
 int fs_isDir(lua_State *L) {
     char * path = fixpath(lua_tostring(L, 1));
-    struct stat st;
-    lua_pushboolean(L, stat(path, &st) == 0 && S_ISDIR(st.st_mode));
+    //struct stat st;
+    //lua_pushboolean(L, stat(path, &st) == 0 && S_ISDIR(st.st_mode));
+    lua_pushboolean(L, strchr(path, '.') == NULL);
     free(path);
     return 1;
 }
 
 int fs_isReadOnly(lua_State *L) {
     char * path = fixpath(lua_tostring(L, 1));
+    //lua_pushboolean(L, true);
     lua_pushboolean(L, access(path, W_OK) != 0);
     free(path);
     return 1;
@@ -101,9 +378,16 @@ int fs_getDrive(lua_State *L) {
 
 int fs_getSize(lua_State *L) {
     char * path = fixpath(lua_tostring(L, 1));
-    struct stat st;
-    if (stat(path, &st) != 0) err(L, path, "No such file");
-    lua_pushinteger(L, st.st_size);
+    //struct stat st;
+    //if (stat(path, &st) != 0) err(L, path, "No such file");
+    //lua_pushinteger(L, st.st_size);
+    FILE *fp = fopen(path, "r");
+    if (fp == NULL) err(L, path, "No such file");
+    int i = 0;
+    char tmp[512];
+    while (!feof(fp)) i += fread(tmp, 512, 1, fp);
+    fclose(fp);
+    lua_pushinteger(L, i);
     free(path);
     return 1;
 }

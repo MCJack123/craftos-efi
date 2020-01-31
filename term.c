@@ -1,7 +1,9 @@
 #include "term.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
+#define bool _Bool
+#define true 1
+#define false 0
 #include <math.h>
 
 EFI_SYSTEM_TABLE * SystemTable;
