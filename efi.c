@@ -13,7 +13,7 @@
 #include <Protocol/SimpleFileSystem.h>
 #include <Protocol/LoadedImage.h>
 #include <Protocol/EfiShellInterface.h>
-#include <Protocol/EfiShellParameters.h>
+#include <Protocol/ShellParameters.h>
 
 #include <Library/ShellCEntryLib.h>
 #include <Library/DebugLib.h>

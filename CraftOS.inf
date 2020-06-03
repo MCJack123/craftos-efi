@@ -11,7 +11,7 @@
 
 [Defines]
   INF_VERSION                    = 0x00010006
-  BASE_NAME                      = CraftOS
+  BASE_NAME                      = CCEFI
   FILE_GUID                      = 426bc876-2fb8-4f3c-8dfa-fcd178cc225f
   MODULE_TYPE                    = UEFI_APPLICATION
   VERSION_STRING                 = 1.8

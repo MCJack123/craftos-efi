@@ -275,7 +275,7 @@ const char * fs_list_rom_programs_turtle[] = {
 
 const char * fs_list_[] = {"rom", NULL};
 
-char* dirname(char* path) {
+/*char* dirname(char* path) {
 	if (path[0] == '/') strcpy(path, &path[1]);
     char tch;
     if (strrchr(path, '/') != NULL) tch = '/';
@@ -283,7 +283,7 @@ char* dirname(char* path) {
     else return path;
     path[strrchr(path, tch) - path] = '\0';
 	return path;
-}
+}*/
 
 int fs_list(lua_State *L) {
     //struct dirent *dir;
